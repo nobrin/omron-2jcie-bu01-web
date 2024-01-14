@@ -28,7 +28,7 @@ Web Bluetooth APIの動作検証のために実装してみました。GATTサ�
 
 ## 使い方
 
-Webページを開き、"Connect to 2JCIE-BU01"をクリックすると、接続を開始するので、「Rbt」を選択し、「ペアリング」をクリックして下さい。しばらくするとデバイスに接続され、測定情報が表示されます。
+Webサーバーに `index.html` と `2jcie-bu01.js` を配置し、閲覧するか、 https://nobrin.github.io/omron-2jcie-bu01-web/index.html を開き、"Connect to 2JCIE-BU01"をクリックすると、接続を開始するので、「Rbt」を選択し、「ペアリング」をクリックして下さい。しばらくするとデバイスに接続され、測定情報が表示されます。
 
 表示データはNotifyを使用しているため、自動で更新されます。
 
