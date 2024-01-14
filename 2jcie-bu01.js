@@ -164,9 +164,10 @@ class MyDevice {
 
     hexDump(bytes) {
         // Hexで出力する
+        // bytes -- DataView
         let hex = [];
         for(let i = 0; i < bytes.byteLength; i++){
-            hex.push(("0" + bytes[i].toString(16)).slice(-2).toUpperCase());
+            hex.push(("0" + bytes.getUint8(i).toString(16)).slice(-2).toUpperCase());
         }
         return hex.join(" ");
     }
@@ -195,9 +196,12 @@ class MyDevice {
 
     async setLEDSettingNormal(cfg) {
         // LED setting [normal state]に書き込む
-        let bytes = new Uint8Array(5);
-        bytes.set(Uint16Array.from([cfg.displayRule]), 0);
-        bytes.set(Uint8Array.from([cfg.red, cfg.green, cfg.blue]), 2);
+        // DataViewでエンディアンを明示する
+        let bytes = new DataView(new ArrayBuffer(5));
+        bytes.setUint16(0, cfg.displayRule, true);  // Little endian
+        bytes.setUint8(2, cfg.red);
+        bytes.setUint8(3, cfg.green);
+        bytes.setUint8(4, cfg.blue);
         console.debug(`setLEDSettingNormal: ${this.hexDump(bytes)}`);
         const msg = {ch: "LED setting [normal state]", data: this.hexDump(bytes)};
         this.dispatchMessage(MSG_WRITE_BYTES, msg);
@@ -217,7 +221,10 @@ class MyDevice {
 
     async setLEDSettingOperation(cfg) {
         // LED state [operation]に書き込む
-        let bytes = Uint8Array.from([cfg.startUp, cfg.error, cfg.connection]);
+        let bytes = new DataView(new ArrayBuffer(3));
+        bytes.setUint8(0, cfg.startUp);
+        bytes.setUint8(1, cfg.error);
+        bytes.setUint8(2, cfg.connection);
         console.debug(`setLEDSettingOperation: ${this.hexDump(bytes)}`);
         const msg = {ch: "LED state [operation]", data: this.hexDump(bytes)};
         this.dispatchMessage(MSG_WRITE_BYTES, msg);
@@ -236,9 +243,10 @@ class MyDevice {
 
     async setAdvertiseSetting(cfg) {
         // Advertise settingに書き込む
-        let bytes = new Uint8Array(3);
-        bytes.set(Uint16Array.from([cfg.adInterval]), 0);
-        bytes.set(Uint8Array.from([cfg.adMode]), 2);
+        // DataViewでエンディアンを明示する
+        let bytes = new DataView(new ArrayBuffer(3));
+        bytes.setUint16(0, cfg.adInterval, true);   // Litte endian
+        bytes.setUint8(2, cfg.adMode);
         console.debug(`setAdvertiseSetting: ${this.hexDump(bytes)}`);
         const msg = {ch: "Advertise setting", data: this.hexDump(bytes)};
         this.dispatchMessage(MSG_WRITE_BYTES, msg);
